@@ -1,0 +1,14 @@
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies and generated files
+node_modules/
+backups/
+*.log
+npm-debug.log*
+
+# TLS material
+nginx/certs/*
+!nginx/certs/.gitkeep

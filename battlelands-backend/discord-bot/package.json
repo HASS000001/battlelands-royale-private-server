@@ -1,0 +1,19 @@
+{
+  "name": "discord-backend-bot",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "deploy": "node src/deploy.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "node-fetch": "^3.3.2",
+    "dotenv": "^16.4.7"
+  },
+  "description": "Discord integration for the backend service."
+}

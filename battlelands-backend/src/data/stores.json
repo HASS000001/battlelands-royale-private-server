@@ -1,0 +1,33 @@
+{
+  "BattlePointsPacks": [
+    {
+      "ItemId": "BattlePointsSmall",
+      "VirtualCurrencyPrices": {
+        "BB": 100
+      },
+      "RealCurrencyPrices": {},
+      "CustomData": "{\"PriceInBB\":{\"Common\":100,\"Rare\":200,\"Legendary\":400},\"BattlePointsReward\":{\"Common\":20,\"Rare\":12,\"Legendary\":6},\"BattlePoints\":{\"Common\":20,\"Rare\":12,\"Legendary\":6}}"
+    },
+    {
+      "ItemId": "BattlePointsMedium",
+      "VirtualCurrencyPrices": {
+        "BB": 250
+      },
+      "RealCurrencyPrices": {},
+      "CustomData": "{\"PriceInBB\":{\"Common\":250,\"Rare\":500,\"Legendary\":1000},\"BattlePointsReward\":{\"Common\":60,\"Rare\":36,\"Legendary\":18},\"BattlePoints\":{\"Common\":60,\"Rare\":36,\"Legendary\":18}}"
+    },
+    {
+      "ItemId": "BattlePointsLarge",
+      "VirtualCurrencyPrices": {
+        "BB": 600
+      },
+      "RealCurrencyPrices": {},
+      "CustomData": "{\"PriceInBB\":{\"Common\":600,\"Rare\":1200,\"Legendary\":2400},\"BattlePointsReward\":{\"Common\":150,\"Rare\":90,\"Legendary\":45},\"BattlePoints\":{\"Common\":150,\"Rare\":90,\"Legendary\":45}}"
+    }
+  ],
+  "Battlebucks": [],
+  "DynamicBundleItems": [],
+  "EventRewards": [],
+  "com.futureplay.battleground.bpstore": [],
+  "com.futureplay.battleground.bundles": []
+}
