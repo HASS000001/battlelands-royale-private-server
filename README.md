@@ -266,17 +266,15 @@ Successful API responses use the project's `{ "code", "status", "data" }` envelo
 
 ## 8. Battlelands data files
 
-The repository ships with empty data files so that no original title data is embedded in the source repository:
+The Battlelands project includes the populated game-data files used by this backend. These are project data, not empty templates or sample placeholders:
 
-| File | Initial content | Expected structure |
-|---|---|---|
-| `src/data/catalog.json` | `[]` | Array of catalog item objects with unique, non-empty `ItemId` values |
-| `src/data/stores.json` | `{}` | Object keyed by store ID; each value is an array of store item objects |
-| `src/data/title_data.json` | `{}` | Object containing the title-data keys and values used by the game |
+| File | Included data | Structure |
+|---|---:|---|
+| `src/data/catalog.json` | 575 catalog items | Array of catalog item objects with unique, non-empty `ItemId` values |
+| `src/data/stores.json` | 6 top-level store groups | Object keyed by store ID; each value is an array of store item objects |
+| `src/data/title_data.json` | 252 title-data settings | Object containing the title-data keys and values used by the game |
 
-The original source data is supplied separately as `original-data-files.zip`. It contains `catalog.json` (575 items), `stores.json` (6 top-level store groups), and `title_data.json` (252 settings). Extract the files and copy them into `src/data/` before the first application start when restoring the original game data.
-
-The application imports each file only when its corresponding database tables are empty. Replacing JSON files after the database has been seeded does not automatically overwrite existing records. The admin interface provides bulk JSON import for catalog and title data; manage store entries through the Stores section. For other changes, use a controlled database update and back up the database first.
+These files provide the Battlelands catalog, store definitions, and title data used during initialization. The application imports each file only when its corresponding database tables are empty. Replacing JSON files after the database has been seeded does not automatically overwrite existing records. The admin interface provides bulk JSON import for catalog and title data; manage store entries through the Stores section. For other changes, use a controlled database update and back up the database first.
 
 The main data is stored in PostgreSQL. Catalog items are stored in `catalog_items`; store definitions and entries are stored in `stores` and `store_items`; title data is stored in `title_data`.
 
