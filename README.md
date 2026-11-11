@@ -168,36 +168,36 @@ The actual layout can vary by Unity version and packaging method. Do not assume 
 
 If the source project is unavailable, the Battlelands APKs used for this deployment were patched with an integrated APK-aware workflow. The recorded offsets below belong to the tested 32-bit and 64-bit Battlelands builds; they are not universal offsets for other releases or Unity games.
 
-#### Verified Battlelands URL replacements
+#### Configured Battlelands URL entries
 
-The original hostname was `battleland.onrender.com`. The replacement hostname is `battlelands.duckdns.org`. Both hostnames are 23 ASCII bytes long, so the replacement keeps the hostname byte length unchanged.
+The 32-bit and 64-bit Battlelands APKs distributed with this project are already patched to use `battlelands.duckdns.org`. The following table records the final URL values present in the supplied patched builds. These offsets belong only to the tested APK builds and are not universal offsets for other Battlelands releases or other Unity IL2CPP games.
 
-| Metadata offset | Original string in the tested build | Replacement string | Role |
-|---|---|---|---|
-| `0x22DA6` | `@battleland.onrender.com/Client/LinkCustomID` | `@battlelands.duckdns.org/Client/LinkCustomID` | Custom ID account-linking endpoint string |
-| `0x22F4F` | `@battleland.onrender.com/Client/LoginWithFacebook` | `@battlelands.duckdns.org/Client/LoginWithFacebook` | Facebook login endpoint string |
-| `0x3F3E4` | `https://battleland.onrender.com` | `https://battlelands.duckdns.org` | Base production API origin used by the tested client build |
+| Metadata offset | Final value in the supplied patched build | Role |
+|---|---|---|
+| `0x22DA6` | `@battlelands.duckdns.org/Client/LinkCustomID` | Custom ID account-linking endpoint string |
+| `0x22F4F` | `@battlelands.duckdns.org/Client/LoginWithFacebook` | Facebook login endpoint string |
+| `0x3F3E4` | `https://battlelands.duckdns.org` | Base production API origin used by the tested client build |
 
-These are the three occurrences handled by the successful patch run for the supplied client builds. The metadata file measured `10,429,900` bytes before patching and retained that exact size afterward. The Title ID was not changed: the client continues to send `299E`, which must match the backend's `TITLE_ID` setting.
+The successful patch run handled these three URL entries in the supplied client builds. The resulting `global-metadata.dat` measured `10,429,900` bytes and retained that size after the same-length replacement. The Title ID was not changed: the client continues to send `299E`, which must match the backend's `TITLE_ID` setting.
 
 #### Integrated APK patch and verification workflow
 
 The patch process is an APK transformation workflow, not a generic ZIP recompression. It processes each ABI package independently and performs the following checks and operations:
 
-1. Open the original APK and identify its ABI/build. Locate `assets/bin/Data/Managed/Metadata/global-metadata.dat` inside the APK.
-2. Extract the metadata entry and validate its expected size, the three original hostname occurrences, their recorded offsets, and the surrounding endpoint strings. Stop rather than patch if the input does not match the expected build.
-3. Replace only the hostname bytes at the three verified locations. The old and new hostnames are both 23 ASCII bytes, so the metadata file size and the recorded offsets remain unchanged.
-4. Verify the patched metadata: the old hostname is absent, the replacement hostname appears in the expected three locations, the surrounding endpoint strings are intact, and the file remains `10,429,900` bytes.
+1. Open the APK and identify its ABI/build. Locate `assets/bin/Data/Managed/Metadata/global-metadata.dat` inside the APK.
+2. Extract the metadata entry and inspect its current URL strings, file size, and relevant offsets. The APKs distributed below already contain `battlelands.duckdns.org` at the three offsets listed above. Stop rather than patch if the file does not match the build you are working with.
+3. Replace the hostname bytes at the verified URL entries with the hostname you intend to use. A direct in-place replacement preserves the metadata layout only when the old and new hostname have the same byte length. If the length differs, use a metadata-aware patching tool that updates the related literal data and metadata references; do not force a longer or shorter string into the existing byte range.
+4. Verify the patched metadata: the intended hostname appears at every required URL entry, the surrounding endpoint strings remain intact, and the metadata structure and file size are valid for the chosen patching method.
 5. Put the modified metadata back at its original APK entry path, preserving the tested entry's `STORED` (uncompressed) method. Rebuild the APK as an Android application package; this is not equivalent to simply creating an arbitrary ZIP file.
 6. Run APK archive-integrity and alignment checks. Align the rebuilt APK before signing it.
-7. Sign the aligned APK with the patching workflow's signing key, then verify the resulting APK signature and certificate information with Android's APK signing tools.
-8. Re-open the final signed APK and repeat the metadata, hostname, file-size, archive, alignment, and signature checks. Produce separate signed outputs for 32-bit and 64-bit builds only when their respective validation passes.
+7. Sign the aligned APK with your signing key, then verify the resulting APK signature and certificate information with Android's APK signing tools.
+8. Re-open the final signed APK and repeat the metadata, hostname, archive, alignment, and signature checks. Process 32-bit and 64-bit builds independently; do not assume that offsets from one ABI or release apply to another.
 
-If a source APK differs from the tested builds, the workflow must re-identify its metadata and offsets rather than blindly reusing this table. The patching utility is separate from this backend repository; this README records the successful client-patching procedure and does not claim that the utility is included in the backend source tree.
+The hosted APKs below are already modified and signed for `battlelands.duckdns.org`; they are ready-made builds for that hostname, not generic templates for arbitrary domains. Anyone who wants to use a different hostname must run the inspection and patching workflow on their own APK copy, validate the new hostname, then rebuild, align, sign, and verify the result. The patching utility is separate from this backend repository; this README documents the workflow but does not claim that the utility is included in the backend source tree.
 
 #### Distributed patched APKs
 
-The following are the hosted files produced by the patching run. The `.bin` suffix was appended because the file-hosting platform would not accept the `.apk` extension directly. It is a filename workaround for hosting only; it does not change the APK bytes, create a different package format, or add another compression layer.
+The following are the hosted files produced by the patching run. Both APKs are already configured for `https://battlelands.duckdns.org`; users deploying this same hostname do not need to patch them again. The `.bin` suffix was appended because the file-hosting platform would not accept the `.apk` extension directly. It is a filename workaround for hosting only; it does not change the APK bytes, create a different package format, or add another compression layer.
 
 | ABI | Hosted file | Download |
 |---|---|---|
@@ -215,11 +215,7 @@ After downloading, rename `patched-64bit.apk.bin` to `patched-64bit.apk`, or `pa
 
 The patched APKs use a different signing certificate from the original installed game. Android therefore will not install them as an in-place update over the differently signed package. Uninstall the original before installing the patched build; uninstalling can remove local application data, so back up anything important first.
 
-#### Nginx response versus APK behavior
-
-The temporary `Coming Soon` page for `battlelands.duckdns.org` was configured separately in Nginx. It is not embedded in the APK and is not generated by the game client. Seeing that page confirms that the hostname reaches the configured Nginx response for that location; it does not prove that the `/Client/*` API, login flow, or game services are operational. The APK only changes the client's configured service destination. The backend must still return the API responses that the game expects.
-
-A network monitor showing a connection to `battlelands.duckdns.org` on TCP 443 confirms that the client attempted to reach the configured host. To confirm game login, inspect the Nginx access log and application log, verify the requested API path and Title ID, and confirm a successful login response followed by an authenticated request.
+The APK patch changes the service destination used by the client; it does not itself provide the API service. The backend at `battlelands.duckdns.org` must still return the API responses expected by the game. A network monitor showing a connection to this hostname on TCP 443 confirms that the client attempted to reach the configured host, not that login succeeded. To confirm game login, inspect the Nginx access log and application log, verify the requested API path and Title ID, and confirm a successful login response followed by an authenticated request.
 
 ## 7. Example client-to-server exchange
 
